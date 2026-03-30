@@ -1,0 +1,258 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes ambientFloat {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-18px) rotate(1deg);
+  }
+}
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    @apply bg-bg-deep;
+    color-scheme: dark;
+  }
+
+  body {
+    @apply m-0 min-h-screen bg-bg-base font-sans text-fg antialiased;
+    background-image:
+      radial-gradient(ellipse at top, rgba(10, 10, 15, 1) 0%, rgba(5, 5, 6, 1) 50%, rgba(2, 2, 3, 1) 100%),
+      radial-gradient(circle at 50% 0%, rgba(94, 106, 210, 0.18), transparent 32%),
+      radial-gradient(circle at 0% 18%, rgba(124, 58, 237, 0.12), transparent 26%),
+      radial-gradient(circle at 100% 24%, rgba(59, 130, 246, 0.1), transparent 24%);
+    overflow-x: hidden;
+  }
+
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  body::before {
+    z-index: -2;
+    opacity: 0.22;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(circle at top, black 30%, transparent 88%);
+  }
+
+  body::after {
+    z-index: -1;
+    opacity: 0.9;
+    background-image:
+      radial-gradient(circle at 50% 10%, rgba(94, 106, 210, 0.2), transparent 28%),
+      radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.08), transparent 24%),
+      radial-gradient(circle at 80% 35%, rgba(168, 85, 247, 0.08), transparent 24%);
+    filter: blur(24px);
+    animation: ambientFloat 12s ease-in-out infinite;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply m-0 font-display tracking-tight text-fg;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button {
+    @apply inline-flex items-center justify-center rounded-lg border border-transparent bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-accent transition-all duration-200 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-accent-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply w-full rounded-lg border border-white/10 bg-[#0f0f12] px-4 py-3 text-sm text-fg shadow-soft placeholder:text-fg-muted focus:border-accent focus:ring-2 focus:ring-accent/30;
+    color-scheme: dark;
+  }
+
+  th,
+  td {
+    @apply px-4 py-3;
+  }
+}
+
+@layer components {
+  .brand-kicker,
+  .eyebrow {
+    @apply inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.24em] text-accent;
+  }
+
+  .page-stack,
+  .page-content {
+    @apply relative z-10 grid gap-6 lg:gap-8;
+  }
+
+  .page-shell {
+    @apply relative overflow-hidden rounded-[28px] border border-white/[0.06] bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-5 shadow-panel backdrop-blur-xl sm:p-6 lg:p-8;
+  }
+
+  .page-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.08), transparent 16%),
+      radial-gradient(circle at top right, rgba(94,106,210,0.18), transparent 28%);
+    opacity: 0.85;
+  }
+
+  .page-header {
+    @apply flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between;
+  }
+
+  .page-header h2 {
+    @apply mt-3 max-w-3xl bg-gradient-to-b from-white via-white/95 to-white/70 bg-clip-text text-3xl font-semibold tracking-tight text-transparent sm:text-4xl;
+  }
+
+  .page-header p {
+    @apply mt-3 max-w-2xl text-sm leading-7 text-fg-muted sm:text-base;
+  }
+
+  .content-grid.two-col {
+    @apply grid gap-6 xl:grid-cols-2;
+  }
+
+  .filters-grid,
+  .inline-form,
+  .settings-grid {
+    @apply grid gap-4 md:grid-cols-2 xl:grid-cols-4;
+  }
+
+  .filters-grid label,
+  .month-picker,
+  .inline-form label {
+    @apply flex flex-col gap-2;
+  }
+
+  .filters-grid span,
+  .month-picker span,
+  .settings-label {
+    @apply text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-fg-muted;
+  }
+
+  .settings-grid {
+    @apply mb-5 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5 shadow-soft backdrop-blur-xl;
+  }
+
+  .settings-value {
+    @apply block break-all;
+  }
+
+  .inline-form {
+    @apply items-end;
+  }
+
+  .budget-explainer {
+    @apply grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)];
+  }
+
+  .button-link {
+    @apply inline-flex items-center justify-center rounded-lg border border-transparent bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-accent transition-all duration-200 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-accent-bright;
+  }
+
+  .button-link.secondary {
+    @apply border border-white/[0.08] bg-white/[0.05] text-fg shadow-panel hover:bg-white/[0.08];
+  }
+
+  .chip-list {
+    @apply mt-4 flex flex-wrap gap-2.5;
+  }
+
+  .chip {
+    @apply rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1.5 text-sm text-fg-muted;
+  }
+
+  .status-list {
+    @apply space-y-3 pl-5 text-sm leading-6 text-fg-muted;
+  }
+
+  .pagination {
+    @apply mt-5;
+  }
+
+  .login-page,
+  .app-loading {
+    @apply flex min-h-screen items-center justify-center px-4;
+  }
+
+  .login-card {
+    @apply relative w-full max-w-lg overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.05] px-8 py-10 shadow-panel backdrop-blur-xl;
+  }
+
+  .login-card h1 {
+    @apply mt-4 bg-gradient-to-b from-white to-white/70 bg-clip-text text-4xl font-semibold tracking-tight text-transparent;
+  }
+
+  .login-card p {
+    @apply mt-4 text-base leading-7 text-fg-muted;
+  }
+
+  .table-shell {
+    @apply overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0b0b0f]/70 shadow-soft;
+  }
+
+  .table-head {
+    @apply bg-white/[0.04];
+  }
+
+  .table-head-row {
+    @apply text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-fg-muted;
+  }
+
+  .table-row {
+    @apply border-b border-white/[0.06] text-sm text-fg-muted transition-colors duration-200 hover:bg-white/[0.03] last:border-b-0;
+  }
+
+  .table-cell-strong {
+    @apply font-medium text-fg;
+  }
+
+  .table-pill {
+    @apply inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium capitalize tracking-wide text-fg;
+  }
+
+  .metric-track {
+    @apply h-3 overflow-hidden rounded-full bg-white/[0.06];
+  }
+
+  .metric-fill {
+    @apply h-full rounded-full;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    animation: none;
+  }
+}

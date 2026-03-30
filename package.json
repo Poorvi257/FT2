@@ -1,0 +1,15 @@
+{
+  "name": "ft2-finance-tracker",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:backend": "npm --workspace @ft2/backend run dev",
+    "test:backend": "npm --workspace @ft2/backend run test",
+    "dev:frontend": "npm --workspace @ft2/frontend run dev",
+    "build:frontend": "npm --workspace @ft2/frontend run build"
+  }
+}
