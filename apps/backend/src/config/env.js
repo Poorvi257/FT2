@@ -32,9 +32,18 @@ if (!parsed.success) {
   throw new Error(`Invalid environment configuration\n${formatted}`);
 }
 
+function normalizePrivateKey(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^"(.*)"$/s, "$1")
+    .replace(/^'(.*)'$/s, "$1")
+    .replace(/\r\n/g, "\n")
+    .replace(/\\n/g, "\n");
+}
+
 const env = {
   ...parsed.data,
-  GOOGLE_PRIVATE_KEY: parsed.data.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n")
+  GOOGLE_PRIVATE_KEY: normalizePrivateKey(parsed.data.GOOGLE_PRIVATE_KEY)
 };
 
 module.exports = env;
