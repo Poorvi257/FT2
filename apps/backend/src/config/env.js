@@ -43,6 +43,8 @@ function normalizePrivateKey(value) {
 
 const env = {
   ...parsed.data,
+  GOOGLE_SERVICE_ACCOUNT_EMAIL: String(parsed.data.GOOGLE_SERVICE_ACCOUNT_EMAIL || "").trim(),
+  GOOGLE_REGISTRY_SHEET_ID: String(parsed.data.GOOGLE_REGISTRY_SHEET_ID || "").trim().replace(/^"(.*)"$/s, "$1").replace(/^'(.*)'$/s, "$1"),
   GOOGLE_PRIVATE_KEY: normalizePrivateKey(parsed.data.GOOGLE_PRIVATE_KEY)
 };
 

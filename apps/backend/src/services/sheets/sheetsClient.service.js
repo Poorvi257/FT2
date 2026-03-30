@@ -1,5 +1,21 @@
 const { google } = require("googleapis");
 const env = require("../../config/env");
+const logger = require("../../config/logger");
+const { AppError } = require("../../utils/errors");
+
+function formatGoogleError(error) {
+  const status = error?.code || error?.response?.status || 500;
+  const providerMessage =
+    error?.response?.data?.error?.message ||
+    error?.response?.data?.error_description ||
+    error?.message ||
+    "Google Sheets request failed";
+
+  return {
+    status,
+    providerMessage
+  };
+}
 
 class SheetsClientService {
   constructor() {
@@ -17,8 +33,23 @@ class SheetsClientService {
   }
 
   async getValues(spreadsheetId, range) {
-    const response = await this.sheets.spreadsheets.values.get({ spreadsheetId, range });
-    return response.data.values || [];
+    try {
+      const response = await this.sheets.spreadsheets.values.get({ spreadsheetId, range });
+      return response.data.values || [];
+    } catch (error) {
+      const { status, providerMessage } = formatGoogleError(error);
+      logger.error({
+        err: error,
+        spreadsheetId,
+        range,
+        serviceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL
+      }, "Google Sheets values.get failed");
+      throw new AppError(status, providerMessage, {
+        spreadsheetId,
+        range,
+        serviceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL
+      });
+    }
   }
 
   async appendValues(spreadsheetId, range, values) {
@@ -54,8 +85,21 @@ class SheetsClientService {
   }
 
   async getSpreadsheet(spreadsheetId) {
-    const response = await this.sheets.spreadsheets.get({ spreadsheetId });
-    return response.data;
+    try {
+      const response = await this.sheets.spreadsheets.get({ spreadsheetId });
+      return response.data;
+    } catch (error) {
+      const { status, providerMessage } = formatGoogleError(error);
+      logger.error({
+        err: error,
+        spreadsheetId,
+        serviceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL
+      }, "Google Sheets spreadsheets.get failed");
+      throw new AppError(status, providerMessage, {
+        spreadsheetId,
+        serviceAccountEmail: env.GOOGLE_SERVICE_ACCOUNT_EMAIL
+      });
+    }
   }
 
   async createSpreadsheet(title) {
