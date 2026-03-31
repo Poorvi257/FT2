@@ -6,18 +6,10 @@ import { ErrorState } from "../components/common/ErrorState.jsx";
 import { BudgetSummaryCards } from "../components/budget/BudgetSummaryCards.jsx";
 import { BudgetBreakdownPanel } from "../components/budget/BudgetBreakdownPanel.jsx";
 import { EmptyState } from "../components/common/EmptyState.jsx";
+import { useAuth } from "../hooks/useAuth.js";
 import { useBudget } from "../hooks/useBudget.js";
+import { currentDateKey, currentMonthKey } from "../lib/userDate.js";
 import { budgetsApi } from "../services/budgetsApi.js";
-
-function currentMonthKey() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function currentDateKey() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-}
 
 function lastDateOfMonth(monthKey) {
   const [year, month] = monthKey.split("-").map(Number);
@@ -25,11 +17,15 @@ function lastDateOfMonth(monthKey) {
 }
 
 export function BudgetPage() {
-  const [month, setMonth] = useState(currentMonthKey());
+  const { settings } = useAuth();
+  const timezone = settings?.timezone || "UTC";
+  const todayKey = currentDateKey(timezone);
+  const thisMonthKey = currentMonthKey(timezone);
+  const [month, setMonth] = useState(thisMonthKey);
   const [principalAmount, setPrincipalAmount] = useState("");
   const [openingPiggyBank, setOpeningPiggyBank] = useState("");
-  const [startDate, setStartDate] = useState(currentDateKey());
-  const [endDate, setEndDate] = useState(lastDateOfMonth(currentMonthKey()));
+  const [startDate, setStartDate] = useState(todayKey);
+  const [endDate, setEndDate] = useState(lastDateOfMonth(thisMonthKey));
   const [actionError, setActionError] = useState("");
   const [status, setStatus] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -40,17 +36,17 @@ export function BudgetPage() {
     if (data?.budget) {
       setPrincipalAmount(String(data.budget.principal_amount || ""));
       setOpeningPiggyBank(String(data.budget.opening_piggy_bank || ""));
-      setStartDate(data.budget.budget_start_date || currentDateKey());
+      setStartDate(data.budget.budget_start_date || todayKey);
       setEndDate(data.budget.budget_end_date || lastDateOfMonth(month));
     }
-  }, [data, month]);
+  }, [data, month, todayKey]);
 
   useEffect(() => {
     if (!data?.budget) {
-      setStartDate(currentDateKey().startsWith(month) ? currentDateKey() : `${month}-01`);
+      setStartDate(todayKey.startsWith(month) ? todayKey : `${month}-01`);
       setEndDate(lastDateOfMonth(month));
     }
-  }, [data, month]);
+  }, [data, month, todayKey]);
 
   async function handleCreateBudget(event) {
     event.preventDefault();
@@ -98,7 +94,7 @@ export function BudgetPage() {
 
     try {
       const result = await budgetsApi.delete(data.budget.budget_id);
-      const nextStartDate = currentDateKey().startsWith(month) ? currentDateKey() : `${month}-01`;
+      const nextStartDate = todayKey.startsWith(month) ? todayKey : `${month}-01`;
       const nextEndDate = lastDateOfMonth(month);
       setData({ budget: null, budgetState: null, asOfDate: null });
       setPrincipalAmount("");
@@ -112,6 +108,10 @@ export function BudgetPage() {
       setIsDeleting(false);
     }
   }
+
+  useEffect(() => {
+    setMonth((current) => (current ? current : thisMonthKey));
+  }, [thisMonthKey]);
 
   const budgetRangeLabel = data?.budget
     ? `${data.budget.budget_start_date} to ${data.budget.budget_end_date}`

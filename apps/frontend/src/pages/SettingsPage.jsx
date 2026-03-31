@@ -3,22 +3,22 @@ import { useSearchParams } from "react-router-dom";
 import { categoriesApi } from "../services/categoriesApi.js";
 import { settingsApi } from "../services/settingsApi.js";
 import { CategoryManager } from "../components/settings/CategoryManager.jsx";
+import { Card } from "../components/common/Card.jsx";
 import { ProfileSettingsForm } from "../components/settings/ProfileSettingsForm.jsx";
 import { LoadingState } from "../components/common/LoadingState.jsx";
 import { ErrorState } from "../components/common/ErrorState.jsx";
-
-function currentMonthKey() {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-}
+import { useAuth } from "../hooks/useAuth.js";
+import { currentMonthKey } from "../lib/userDate.js";
 
 export function SettingsPage() {
+  const { applySettings, refreshSettings } = useAuth();
   const [params, setParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -78,6 +78,24 @@ export function SettingsPage() {
     }
   }
 
+  async function handleSavePreferences(body) {
+    setIsSaving(true);
+    setError("");
+    setStatus("");
+
+    try {
+      const response = await settingsApi.update(body);
+      setSettings(response.settings);
+      applySettings(response.settings);
+      await refreshSettings();
+      setStatus("Preferences updated.");
+    } catch (err) {
+      setError(err.message || "Failed to update settings");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   return (
     <div className="page-shell page-stack">
       <div className="page-header">
@@ -95,11 +113,21 @@ export function SettingsPage() {
         <>
           <ProfileSettingsForm
             settings={settings}
+            onSave={handleSavePreferences}
             onResync={handleResync}
-            month={currentMonthKey()}
+            month={currentMonthKey(settings?.timezone || "UTC")}
             googleConnectUrl={settingsApi.getGoogleConnectUrl()}
+            saving={isSaving}
           />
-          <CategoryManager categories={categories} onCreate={handleCreateCategory} />
+          {settings?.userSheetId ? (
+            <CategoryManager categories={categories} onCreate={handleCreateCategory} />
+          ) : (
+            <Card title="Categories" className="bg-white/[0.04]">
+              <p className="text-sm leading-6 text-fg-muted">
+                Connect Google Sheets to manage categories for transaction capture and budgeting.
+              </p>
+            </Card>
+          )}
         </>
       ) : null}
     </div>

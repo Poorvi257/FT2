@@ -11,6 +11,30 @@ export function AppProviders({ children }) {
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settings, setSettings] = useState(null);
 
+  function applySettings(nextSettings) {
+    setSettings(nextSettings);
+    setCurrencyDefaults(nextSettings?.currency || "SGD");
+  }
+
+  async function refreshSettings(nextUser = user) {
+    if (!nextUser) {
+      applySettings(null);
+      return null;
+    }
+
+    setSettingsLoading(true);
+
+    try {
+      const settingsResponse = await settingsApi.get();
+      applySettings(settingsResponse.settings);
+      return settingsResponse.settings;
+    } catch {
+      return null;
+    } finally {
+      setSettingsLoading(false);
+    }
+  }
+
   useEffect(() => {
     let active = true;
 
@@ -23,38 +47,20 @@ export function AppProviders({ children }) {
         }
 
         setUser(response.user);
-
-        if (response.user?.userSheetId) {
-          setSettingsLoading(true);
-
-          try {
-            const settingsResponse = await settingsApi.get();
-
-            if (!active) {
-              return;
-            }
-
-            setSettings(settingsResponse.settings);
-            setCurrencyDefaults(settingsResponse.settings?.currency || "SGD");
-          } catch {
-            if (active) {
-              setSettings(null);
-              setCurrencyDefaults("SGD");
-            }
-          } finally {
-            if (active) {
-              setSettingsLoading(false);
-            }
+        if (response.user) {
+          const settingsResponse = await settingsApi.get().catch(() => null);
+          if (!active) {
+            return;
           }
+
+          applySettings(settingsResponse?.settings || null);
         } else {
-          setSettings(null);
-          setCurrencyDefaults("SGD");
+          applySettings(null);
         }
       } catch {
         if (active) {
           setUser(null);
-          setSettings(null);
-          setCurrencyDefaults("SGD");
+          applySettings(null);
         }
       } finally {
         if (active) {
@@ -76,7 +82,10 @@ export function AppProviders({ children }) {
     loading,
     settings,
     settingsLoading,
-    setUser
+    setUser,
+    setSettings: applySettings,
+    applySettings,
+    refreshSettings
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
