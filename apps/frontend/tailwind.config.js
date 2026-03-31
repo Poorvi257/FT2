@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "480px"
+      },
       fontFamily: {
         sans: ["Inter", "Geist Sans", "system-ui", "sans-serif"],
         display: ["Inter", "Geist Sans", "system-ui", "sans-serif"],

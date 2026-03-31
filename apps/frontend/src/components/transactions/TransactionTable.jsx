@@ -3,7 +3,7 @@ import { formatCurrency } from "../../lib/formatCurrency.js";
 export function TransactionTable({ items }) {
   return (
     <div className="table-shell overflow-x-auto">
-      <table className="min-w-full text-sm text-fg-muted">
+      <table className="min-w-[620px] text-sm text-fg-muted sm:min-w-full">
         <thead className="table-head">
           <tr className="table-head-row">
             <th>Date</th>

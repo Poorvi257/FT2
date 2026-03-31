@@ -5,7 +5,7 @@ export function PastBudgetTable({ items, onDelete, deletingBudgetId }) {
   return (
     <Card title="Past budgets" className="bg-white/[0.04]">
       <div className="table-shell overflow-x-auto">
-        <table className="min-w-full text-sm text-fg-muted">
+        <table className="min-w-[720px] text-sm text-fg-muted sm:min-w-full">
           <thead className="table-head">
             <tr className="table-head-row">
               <th>Month</th>

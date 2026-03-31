@@ -18,7 +18,7 @@ function BudgetMetricBar({ label, amount, total, colorClassName, note }) {
   const width = clampPercent(amount, total);
 
   return (
-    <div className="rounded-3xl border border-white/[0.06] bg-[#0b0b10]/60 p-5 shadow-soft">
+    <div className="rounded-[24px] border border-white/[0.06] bg-[#0b0b10]/60 p-4 shadow-soft sm:rounded-3xl sm:p-5">
       <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-baseline sm:justify-between">
         <span className="font-medium text-fg">{label}</span>
         <span className="text-xl font-semibold text-fg">{formatCurrency(amount)}</span>
@@ -54,9 +54,9 @@ export function BudgetBreakdownPanel({ budget, budgetState, asOfDate }) {
     <Card
       title="Budget breakdown"
       className="bg-white/[0.04]"
-      titleClassName="font-display text-xl font-semibold tracking-tight text-fg"
+      titleClassName="font-display text-lg font-semibold tracking-tight text-fg sm:text-xl"
     >
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         <BudgetMetricBar
           label="Main budget left"
           amount={Number(budgetState?.remainingMainBudget || 0)}
@@ -73,11 +73,11 @@ export function BudgetBreakdownPanel({ budget, budgetState, asOfDate }) {
         />
       </div>
 
-      <div className="mt-8 grid gap-6 xl:grid-cols-[1.05fr_1fr]">
-        <section className="rounded-[28px] border border-white/[0.06] bg-[#0b0b10]/60 p-6 shadow-soft">
-          <div className="mb-5 flex items-center justify-between gap-4">
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1.05fr_1fr]">
+        <section className="rounded-[24px] border border-white/[0.06] bg-[#0b0b10]/60 p-4 shadow-soft sm:rounded-[28px] sm:p-6">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h4 className="font-display text-base font-semibold tracking-tight text-fg">Current budget details</h4>
-            <span className="rounded-full border border-accent/20 bg-accent/10 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-accent">
+            <span className="w-fit rounded-full border border-accent/20 bg-accent/10 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-accent">
               As of {asOfDate || budget?.budget_start_date}
             </span>
           </div>

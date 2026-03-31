@@ -15,8 +15,10 @@ import {
   darkChartGridStroke
 } from "../common/ChartTooltip.jsx";
 import { formatCurrency } from "../../lib/formatCurrency.js";
+import { useMediaQuery } from "../../hooks/useMediaQuery.js";
 
 export function WeeklySummary({ items }) {
+  const isMobile = useMediaQuery("(max-width: 639px)");
   const normalized = items?.map((item) => ({ week: item.week, Spend: Number(item.amount || 0) })) || [];
 
   return (
@@ -26,16 +28,16 @@ export function WeeklySummary({ items }) {
       titleClassName="font-display text-lg font-semibold tracking-tight text-fg"
     >
       {normalized.length ? (
-        <div className="h-72">
+        <div className="h-56 sm:h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={normalized} margin={{ top: 12, right: 12, left: 4, bottom: 8 }}>
               <CartesianGrid vertical={false} stroke={darkChartGridStroke} strokeDasharray="3 3" />
-              <XAxis dataKey="week" tick={darkChartAxisStyle} axisLine={false} tickLine={false} />
+              <XAxis dataKey="week" tick={{ ...darkChartAxisStyle, fontSize: isMobile ? 10 : 12 }} axisLine={false} tickLine={false} />
               <YAxis
-                tick={darkChartAxisStyle}
+                tick={{ ...darkChartAxisStyle, fontSize: isMobile ? 10 : 12 }}
                 axisLine={false}
                 tickLine={false}
-                width={82}
+                width={isMobile ? 56 : 82}
                 tickFormatter={(value) => formatCurrency(value)}
               />
               <Tooltip content={<ChartTooltip valueFormatter={formatCurrency} variant="dark" />} cursor={false} />
@@ -43,7 +45,7 @@ export function WeeklySummary({ items }) {
                 dataKey="Spend"
                 fill="#38BDF8"
                 radius={[10, 10, 0, 0]}
-                barSize={36}
+                barSize={isMobile ? 24 : 36}
                 activeBar={{ stroke: "rgba(255,255,255,0.22)", strokeWidth: 1.5, filter: "brightness(1.06)" }}
               />
             </BarChart>

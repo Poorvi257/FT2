@@ -9,7 +9,7 @@ export function LastTransactionsTable({ items }) {
       titleClassName="font-display text-lg font-semibold tracking-tight text-fg"
     >
       <div className="table-shell overflow-x-auto">
-        <table className="min-w-full text-sm text-fg-muted">
+        <table className="min-w-[560px] text-sm text-fg-muted sm:min-w-full">
           <thead className="table-head">
             <tr className="table-head-row">
               <th>Date</th>

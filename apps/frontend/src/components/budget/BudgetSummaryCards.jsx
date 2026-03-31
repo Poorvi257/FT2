@@ -43,17 +43,17 @@ export function BudgetSummaryCards({ budget, budgetState, asOfDate }) {
   ];
 
   return (
-    <div className="grid gap-4 xl:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {items.map((item) => (
         <Card
           key={item.label}
-          className="min-h-[180px] bg-white/[0.05]"
+          className="min-h-[156px] bg-white/[0.05] sm:min-h-[180px]"
           titleClassName="sr-only"
         >
           <div className="flex items-start justify-between gap-4">
-            <div>
+            <div className="min-w-0">
               <span className="block font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-fg-muted">{item.label}</span>
-              <strong className="mt-6 block text-4xl font-semibold tracking-tight text-fg">{item.value}</strong>
+              <strong className="mt-5 block break-words text-[1.9rem] font-semibold tracking-tight text-fg sm:mt-6 sm:text-4xl">{item.value}</strong>
               <p className="mt-4 text-sm leading-6 text-fg-muted">{item.hint}</p>
             </div>
             <span className={`inline-flex rounded-2xl border p-3 shadow-soft ${item.accentClassName}`}>

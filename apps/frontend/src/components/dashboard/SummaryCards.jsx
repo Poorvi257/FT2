@@ -25,17 +25,17 @@ export function SummaryCards({ totals }) {
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {items.map((item) => (
         <Card
           key={item.label}
-          className="min-h-[156px] bg-white/[0.05]"
+          className="min-h-[132px] bg-white/[0.05] sm:min-h-[156px]"
           titleClassName="sr-only"
         >
           <div className="flex items-start justify-between gap-4">
-            <div>
+            <div className="min-w-0">
               <span className="block font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-fg-muted">{item.label}</span>
-              <strong className="mt-5 block text-3xl font-semibold tracking-tight text-fg">{item.value}</strong>
+              <strong className="mt-4 block break-words text-[1.75rem] font-semibold tracking-tight text-fg sm:mt-5 sm:text-3xl">{item.value}</strong>
             </div>
             <span className={`inline-flex rounded-2xl border p-3 shadow-soft ${item.accentClassName}`}>
               <item.icon size={20} />

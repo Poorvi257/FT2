@@ -63,7 +63,7 @@
   }
 
   #root {
-    @apply min-h-screen;
+    @apply min-h-screen min-w-0;
   }
 
   h1,
@@ -96,7 +96,7 @@
 
   th,
   td {
-    @apply px-4 py-3;
+    @apply px-3 py-3 sm:px-4;
   }
 }
 
@@ -108,11 +108,11 @@
 
   .page-stack,
   .page-content {
-    @apply relative z-10 grid gap-6 lg:gap-8;
+    @apply relative z-10 grid gap-4 sm:gap-6 lg:gap-8;
   }
 
   .page-shell {
-    @apply relative overflow-hidden rounded-[28px] border border-white/[0.06] bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-5 shadow-panel backdrop-blur-xl sm:p-6 lg:p-8;
+    @apply relative w-full min-w-0 overflow-hidden rounded-[22px] border border-white/[0.06] bg-gradient-to-b from-white/[0.08] to-white/[0.03] p-4 shadow-panel backdrop-blur-xl sm:rounded-[28px] sm:p-6 lg:p-8;
   }
 
   .page-shell::before {
@@ -132,21 +132,21 @@
   }
 
   .page-header h2 {
-    @apply mt-3 max-w-3xl bg-gradient-to-b from-white via-white/95 to-white/70 bg-clip-text text-3xl font-semibold tracking-tight text-transparent sm:text-4xl;
+    @apply mt-3 max-w-3xl bg-gradient-to-b from-white via-white/95 to-white/70 bg-clip-text text-[1.8rem] font-semibold tracking-tight text-transparent xs:text-[2rem] sm:text-4xl;
   }
 
   .page-header p {
-    @apply mt-3 max-w-2xl text-sm leading-7 text-fg-muted sm:text-base;
+    @apply mt-3 max-w-2xl text-sm leading-6 text-fg-muted sm:text-base sm:leading-7;
   }
 
   .content-grid.two-col {
-    @apply grid gap-6 xl:grid-cols-2;
+    @apply grid gap-4 sm:gap-6 xl:grid-cols-2;
   }
 
   .filters-grid,
   .inline-form,
   .settings-grid {
-    @apply grid gap-4 md:grid-cols-2 xl:grid-cols-4;
+    @apply grid gap-4 sm:grid-cols-2 2xl:grid-cols-4;
   }
 
   .filters-grid label,
@@ -162,7 +162,7 @@
   }
 
   .settings-grid {
-    @apply mb-5 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5 shadow-soft backdrop-blur-xl;
+    @apply mb-5 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4 shadow-soft backdrop-blur-xl sm:p-5;
   }
 
   .settings-value {
@@ -171,6 +171,12 @@
 
   .inline-form {
     @apply items-end;
+  }
+
+  .inline-form > button,
+  .inline-form > .button-link,
+  .inline-form > a {
+    @apply w-full sm:w-auto;
   }
 
   .budget-explainer {
@@ -207,7 +213,7 @@
   }
 
   .login-card {
-    @apply relative w-full max-w-lg overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.05] px-8 py-10 shadow-panel backdrop-blur-xl;
+    @apply relative w-full max-w-lg overflow-hidden rounded-[24px] border border-white/[0.08] bg-white/[0.05] px-5 py-8 shadow-panel backdrop-blur-xl sm:rounded-[28px] sm:px-8 sm:py-10;
   }
 
   .login-card h1 {
@@ -219,7 +225,7 @@
   }
 
   .table-shell {
-    @apply overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0b0b0f]/70 shadow-soft;
+    @apply -mx-1 overflow-x-auto overflow-y-hidden rounded-2xl border border-white/[0.06] bg-[#0b0b0f]/70 shadow-soft sm:mx-0;
   }
 
   .table-head {
