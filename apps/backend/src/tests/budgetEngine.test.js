@@ -121,3 +121,34 @@ test("deleted transactions are ignored", () => {
   assert.equal(result.budgetState.remainingMainBudget, 500);
   assert.equal(result.budgetState.todaySpent, 0);
 });
+
+test("changing timezone only changes piggy-bank transfer timing through the as-of date boundary", () => {
+  const transactions = [
+    { entry_date: "2026-03-29", amount: 120, transaction_type: "variable" }
+  ];
+
+  const beforeClose = budgetEngineService.calculateBudgetState({
+    monthKey: "2026-03",
+    principalAmount: 900,
+    openingPiggyBank: 0,
+    budgetStartDate: "2026-03-29",
+    budgetEndDate: "2026-03-31",
+    asOfDate: "2026-03-29",
+    transactions
+  });
+
+  const afterClose = budgetEngineService.calculateBudgetState({
+    monthKey: "2026-03",
+    principalAmount: 900,
+    openingPiggyBank: 0,
+    budgetStartDate: "2026-03-29",
+    budgetEndDate: "2026-03-31",
+    asOfDate: "2026-03-30",
+    transactions
+  });
+
+  assert.equal(beforeClose.budgetState.piggyBank, 0);
+  assert.equal(afterClose.budgetState.piggyBank, 180);
+  assert.equal(beforeClose.budgetState.dailySeries[0].dayType, "active");
+  assert.equal(afterClose.budgetState.dailySeries[0].dayType, "closed");
+});

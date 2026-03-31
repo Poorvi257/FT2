@@ -208,3 +208,79 @@ test("updateSettings skips sheet sync when no linked sheet exists", async (conte
   assert.equal(getSetupCalled, false);
   assert.equal(upsertSetupCalled, false);
 });
+
+test("updating timezone does not rewrite stored transaction rows", async (context) => {
+  const originalGetRequiredByAppUserId = userRegistryService.getRequiredByAppUserId;
+  const originalUpdateUser = userRegistryService.updateUser;
+  const originalGetSetup = userSheetService.getSetup;
+  const originalUpsertSetup = userSheetService.upsertSetup;
+  const originalAppendTransaction = userSheetService.appendTransaction;
+  const originalReplaceTransactionsForMonth = userSheetService.replaceTransactionsForMonth;
+
+  context.after(() => {
+    userRegistryService.getRequiredByAppUserId = originalGetRequiredByAppUserId;
+    userRegistryService.updateUser = originalUpdateUser;
+    userSheetService.getSetup = originalGetSetup;
+    userSheetService.upsertSetup = originalUpsertSetup;
+    userSheetService.appendTransaction = originalAppendTransaction;
+    userSheetService.replaceTransactionsForMonth = originalReplaceTransactionsForMonth;
+  });
+
+  let appendCalled = false;
+  let replaceCalled = false;
+
+  userRegistryService.getRequiredByAppUserId = async () => ({
+    app_user_id: "usr_3",
+    telegram_user_id: "tg_3",
+    telegram_chat_id: "chat_3",
+    telegram_username: "user3",
+    web_login_email: "user3@example.com",
+    user_sheet_id: "sheet_3",
+    user_sheet_url: "https://docs.google.com/sheet/3",
+    timezone: "UTC",
+    currency: "USD",
+    created_at: "2026-03-01T00:00:00.000Z"
+  });
+
+  userRegistryService.updateUser = async (_appUserId, patch) => ({
+    app_user_id: "usr_3",
+    telegram_user_id: "tg_3",
+    telegram_chat_id: "chat_3",
+    telegram_username: "user3",
+    web_login_email: "user3@example.com",
+    user_sheet_id: "sheet_3",
+    user_sheet_url: "https://docs.google.com/sheet/3",
+    timezone: patch.timezone,
+    currency: patch.currency,
+    created_at: "2026-03-01T00:00:00.000Z"
+  });
+
+  userSheetService.getSetup = async () => ({
+    app_user_id: "usr_3",
+    display_name: "User 3",
+    timezone: "UTC",
+    currency: "USD",
+    telegram_user_id: "tg_3",
+    telegram_chat_id: "chat_3",
+    budgeting_enabled: "true",
+    active_budget_id: "",
+    created_at: "2026-03-01T00:00:00.000Z",
+    updated_at: "2026-03-10T00:00:00.000Z"
+  });
+
+  userSheetService.upsertSetup = async () => {};
+  userSheetService.appendTransaction = async () => {
+    appendCalled = true;
+  };
+  userSheetService.replaceTransactionsForMonth = async () => {
+    replaceCalled = true;
+  };
+
+  await settingsService.updateSettings("usr_3", {
+    timezone: "Asia/Kolkata",
+    currency: "USD"
+  });
+
+  assert.equal(appendCalled, false);
+  assert.equal(replaceCalled, false);
+});

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { authApi } from "../services/authApi.js";
 import { settingsApi } from "../services/settingsApi.js";
+import { clearStoredSessionToken } from "../lib/authSession.js";
 import { setCurrencyDefaults } from "../lib/formatCurrency.js";
 
 const AuthContext = createContext(null);
@@ -59,6 +60,7 @@ export function AppProviders({ children }) {
         }
       } catch {
         if (active) {
+          clearStoredSessionToken();
           setUser(null);
           applySettings(null);
         }

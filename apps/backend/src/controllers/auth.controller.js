@@ -17,6 +17,19 @@ function getSessionCookieOptions() {
   };
 }
 
+function createFrontendSessionRedirect(nextPath, user, sessionToken) {
+  const params = new URLSearchParams({
+    sessionToken,
+    nextPath,
+    appUserId: user.app_user_id,
+    onboardingStatus: user.onboarding_status || "pending",
+    userSheetId: user.user_sheet_id || "",
+    webLoginEmail: user.web_login_email || ""
+  });
+
+  return `${env.FRONTEND_BASE_URL}/login#${params.toString()}`;
+}
+
 async function consumeMagicLinkController(req, res) {
   const { token } = req.body;
   const payload = magicLinkService.verifyToken(token);
@@ -89,7 +102,7 @@ async function googleCallbackController(req, res) {
 
     res.cookie("ft2_session", sessionToken, getSessionCookieOptions());
 
-    res.redirect(existingUser.user_sheet_id ? `${env.FRONTEND_BASE_URL}/` : `${env.FRONTEND_BASE_URL}/settings`);
+    res.redirect(createFrontendSessionRedirect(existingUser.user_sheet_id ? "/" : "/settings", existingUser, sessionToken));
     return;
   }
 

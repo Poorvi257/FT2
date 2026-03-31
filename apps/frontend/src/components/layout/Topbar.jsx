@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../services/authApi.js";
 import { useAuth } from "../../hooks/useAuth.js";
+import { clearStoredSessionToken } from "../../lib/authSession.js";
 
 export function Topbar() {
   const { user, setUser } = useAuth();
@@ -9,6 +10,7 @@ export function Topbar() {
 
   async function handleLogout() {
     await authApi.logout();
+    clearStoredSessionToken();
     setUser(null);
     navigate("/login");
   }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { authApi } from "../services/authApi.js";
 import { useAuth } from "../hooks/useAuth.js";
+import { setStoredSessionToken } from "../lib/authSession.js";
 
 const DEFAULT_TELEGRAM_BOT_URL = "https://t.me/finance_tracket_bot";
 
@@ -34,10 +35,29 @@ export function LoginPage() {
   const telegramSignupUrl = getTelegramSignupUrl(import.meta.env.VITE_TELEGRAM_BOT_URL);
   const token = params.get("token");
   const googleState = params.get("google");
+  const oauthHash = typeof window !== "undefined" ? new URLSearchParams(window.location.hash.replace(/^#/, "")) : null;
+  const sessionToken = oauthHash?.get("sessionToken") || "";
+  const nextPath = oauthHash?.get("nextPath") || "";
+  const oauthUserSheetId = oauthHash?.get("userSheetId") || "";
+  const oauthEmail = oauthHash?.get("webLoginEmail") || "";
+  const oauthOnboardingStatus = oauthHash?.get("onboardingStatus") || "pending";
+  const oauthAppUserId = oauthHash?.get("appUserId") || "";
 
   useEffect(() => {
-    if (!loading && user && !token) {
+    if (!loading && user && !token && !sessionToken) {
       navigate(user.userSheetId ? "/" : "/settings");
+      return;
+    }
+
+    if (sessionToken) {
+      setStoredSessionToken(sessionToken);
+      setUser({
+        appUserId: oauthAppUserId,
+        onboardingStatus: oauthOnboardingStatus,
+        userSheetId: oauthUserSheetId,
+        webLoginEmail: oauthEmail
+      });
+      navigate(nextPath || (oauthUserSheetId ? "/" : "/settings"), { replace: true });
       return;
     }
 
@@ -54,6 +74,7 @@ export function LoginPage() {
     setMessage("Signing you in with your Telegram magic link...");
     authApi.consumeMagicLink(token)
       .then((result) => {
+        setStoredSessionToken(result.token);
         setUser({
           appUserId: result.appUserId,
           onboardingStatus: result.onboardingStatus,
@@ -63,7 +84,7 @@ export function LoginPage() {
         navigate(result.userSheetId ? "/" : "/settings");
       })
       .catch((error) => setMessage(error.message));
-  }, [googleState, loading, navigate, setUser, token, user]);
+  }, [googleState, loading, navigate, nextPath, oauthAppUserId, oauthEmail, oauthOnboardingStatus, oauthUserSheetId, sessionToken, setUser, token, user]);
 
   return (
     <div className="login-page">
