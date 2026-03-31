@@ -20,10 +20,10 @@ import { formatCurrency } from "../../lib/formatCurrency.js";
 
 export function PiggyBankTrendChart({ budgetState }) {
   const items = (budgetState?.dailySeries || [])
-    .filter((item) => item.dayType === "closed")
     .map((item) => ({
       day: item.label,
-      "Piggy balance": Number(item.piggyBank || 0)
+      "Piggy balance": Number(item.piggyBank || 0),
+      dayType: item.dayType
     }));
   const currentValue = items[items.length - 1]?.["Piggy balance"] || Number(budgetState?.piggyBank || 0);
 
@@ -55,7 +55,7 @@ export function PiggyBankTrendChart({ budgetState }) {
                 />
                 <Tooltip content={<ChartTooltip valueFormatter={formatCurrency} variant="dark" />} cursor={false} />
                 <Area
-                  type="monotone"
+                  type="stepAfter"
                   dataKey="Piggy balance"
                   stroke="#34D399"
                   strokeWidth={3}
